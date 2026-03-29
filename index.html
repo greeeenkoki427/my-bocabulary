@@ -23,7 +23,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* モーダル表示中に背景のスクロールを防止 */
         body.modal-open { overflow: hidden; }
 
         .container {
@@ -55,7 +54,6 @@
 
         .add-btn:hover { transform: scale(1.05); }
 
-        /* メイングリッド：余白を詰めたカードデザイン */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -72,7 +70,6 @@
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid rgba(255,255,255,0.4);
-            height: auto; 
             min-height: 100px; 
         }
 
@@ -100,18 +97,21 @@
             font-size: 18px;
         }
 
-        /* モーダル：画面全体を使い、コンテンツ量に応じてスクロール可能 */
+        /* --- 修正ポイント：モーダルを真ん中に配置 --- */
         .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: var(--overlay-bg);
             backdrop-filter: blur(15px);
+            
+            /* 上下左右の中央に配置 */
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
+            
             z-index: 1000;
-            overflow-y: auto;
-            padding: 60px 20px;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .modal-content {
@@ -120,11 +120,43 @@
             max-width: 1000px;
             padding: 60px;
             border-radius: 36px;
-            position: relative;
             box-shadow: 0 30px 60px rgba(0,0,0,0.3);
             animation: cardShow 0.4s ease-out;
-            margin-bottom: 40px;
             box-sizing: border-box;
+            
+            /* ×ボタンを配置するための基準点 */
+            position: relative; 
+            
+            /* スマホ等で中身が長い場合にスクロール可能にする */
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* --- 修正ポイント：×ボタンを枠の角に配置 --- */
+        .close-btn {
+            /* fixedからabsoluteに変更 */
+            position: absolute;
+            /* 白枠（modal-content）の右上角からの距離 */
+            top: 20px;
+            right: 20px;
+            
+            width: 36px;
+            height: 36px;
+            background: #f5f5f7;
+            color: #1d1d1f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            z-index: 1001;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #e8e8ed;
         }
 
         @keyframes cardShow {
@@ -132,25 +164,6 @@
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        .close-btn {
-            position: fixed;
-            top: 25px;
-            right: 25px;
-            width: 44px;
-            height: 44px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 28px;
-            z-index: 1001;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        /* 新規追加用：左にWord、右に長いDescriptionの2カラム */
         .form-layout {
             display: flex;
             gap: 40px;
@@ -158,15 +171,8 @@
             margin-bottom: 40px;
         }
 
-        .form-left {
-            flex: 1;
-            min-width: 300px;
-        }
-
-        .form-right {
-            flex: 1.5;
-            min-width: 300px;
-        }
+        .form-left { flex: 1; min-width: 300px; }
+        .form-right { flex: 1.5; min-width: 300px; }
 
         input#newWord {
             font-size: 32px;
@@ -183,7 +189,7 @@
             font-size: 18px;
             line-height: 1.6;
             width: 100%;
-            min-height: 450px;
+            min-height: 400px;
             background: #f5f5f7;
             border: none;
             border-radius: 20px;
@@ -204,6 +210,12 @@
 
         .delete-link { color: #ff3b30; font-size: 16px; cursor: pointer; font-weight: 500; opacity: 0.7; transition: 0.2s; }
         .delete-link:hover { opacity: 1; text-decoration: underline; }
+
+        /* スマホ用調整：余白を少し詰める */
+        @media (max-width: 600px) {
+            .modal-content { padding: 40px 20px; }
+            .detail-word { font-size: 32px; }
+        }
     </style>
 </head>
 <body>
@@ -217,8 +229,8 @@
 </div>
 
 <div id="detailModal" class="modal-overlay" onclick="closeModals()">
-    <div class="close-btn" onclick="closeModals()">×</div>
     <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="close-btn" onclick="closeModals()">×</div>
         <div class="detail-category">Definitions</div>
         <div id="modalWord" class="detail-word"></div>
         <div id="modalText" class="detail-text"></div>
@@ -229,8 +241,8 @@
 </div>
 
 <div id="addModal" class="modal-overlay" onclick="closeModals()">
-    <div class="close-btn" onclick="closeModals()">×</div>
     <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="close-btn" onclick="closeModals()">×</div>
         <div class="form-layout">
             <div class="form-left">
                 <div class="detail-category">New Vocabulary</div>
@@ -248,7 +260,6 @@
 <script>
     window.onload = loadWords;
 
-    // LocalStorageからデータを読み込んで表示
     function loadWords() {
         const grid = document.getElementById('wordGrid');
         grid.innerHTML = '';
@@ -256,7 +267,6 @@
         savedWords.forEach((item, index) => addCardToUI(item.word, item.detail, index));
     }
 
-    // 単語の詳細を表示
     function showDetail(word, text, index) {
         document.getElementById('modalWord').innerText = word;
         document.getElementById('modalText').innerText = text;
@@ -264,11 +274,9 @@
         
         const modal = document.getElementById('detailModal');
         modal.style.display = 'flex';
-        modal.scrollTop = 0;
         document.body.classList.add('modal-open');
     }
 
-    // 単語の削除
     function deleteWord(index) {
         if (!confirm("この単語を削除しますか？")) return;
         let savedWords = JSON.parse(localStorage.getItem('myWords')) || [];
@@ -280,7 +288,6 @@
 
     function openAddModal() {
         document.getElementById('addModal').style.display = 'flex';
-        document.getElementById('addModal').scrollTop = 0;
         document.body.classList.add('modal-open');
         document.getElementById('newWord').focus();
     }
@@ -291,7 +298,6 @@
         document.body.classList.remove('modal-open');
     }
 
-    // データの保存と追加
     function saveAndAdd() {
         const word = document.getElementById('newWord').value;
         const detail = document.getElementById('newDetail').value;
@@ -307,7 +313,6 @@
         closeModals();
     }
 
-    // カードをUIに追加
     function addCardToUI(word, detail, index) {
         const grid = document.getElementById('wordGrid');
         const newCard = document.createElement('div');
