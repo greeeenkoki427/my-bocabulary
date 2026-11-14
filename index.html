@@ -59,10 +59,7 @@
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--line);
         }
-        .brand {
-            padding: 14px 16px 8px;
-            font-weight: 700; font-size: 18px;
-        }
+        .brand { padding: 14px 16px 8px; font-weight: 700; font-size: 18px; }
         .chips {
             display: flex; gap: 8px;
             overflow-x: auto; -webkit-overflow-scrolling: touch;
@@ -81,9 +78,7 @@
         }
 
         /* ヒーロー */
-        .hero {
-            padding: 36px 20px 28px;
-        }
+        .hero { padding: 36px 20px 28px; }
         .hero h1 {
             font-size: 44px; line-height: 1.1; font-weight: 700;
             margin: 0 0 12px; letter-spacing: -0.01em;
@@ -98,25 +93,11 @@
             padding: 28px 16px 20px;
             scroll-margin-top: 110px;
         }
-        .section-head {
-            display: flex; align-items: flex-end; justify-content: space-between;
-            gap: 12px; margin-bottom: 18px;
-        }
-        .section h2 {
-            font-size: 28px; line-height: 1.2; font-weight: 700; margin: 0;
-        }
+        .section-head { margin-bottom: 18px; }
+        .section h2 { font-size: 28px; line-height: 1.2; font-weight: 700; margin: 0; }
         .section .eyebrow {
             font-size: 12px; color: var(--sub); font-weight: 600;
             letter-spacing: 0.08em; margin: 0 0 6px;
-        }
-        .more {
-            flex: none;
-            border: 1.5px solid var(--text);
-            border-radius: 980px;
-            padding: 6px 14px;
-            font-size: 13px; font-weight: 600;
-            color: var(--text);
-            white-space: nowrap;
         }
 
         /* 商品グリッド：スマホは2列 */
@@ -128,49 +109,53 @@
         .card {
             background: var(--card);
             border-radius: 18px;
-            padding: 10px 10px 14px;
+            padding: 10px 10px 12px;
             display: flex; flex-direction: column;
         }
         .card .img {
             aspect-ratio: 1 / 1;
             border-radius: 12px;
             background: var(--img);
+            overflow: hidden;
             display: flex; align-items: center; justify-content: center;
-            color: var(--sub); font-size: 12px;
             margin-bottom: 10px;
         }
+        .card .img img { width: 100%; height: 100%; object-fit: contain; }
+        .card .img span { color: var(--sub); font-size: 12px; }
         .card .name {
             font-size: 14px; line-height: 1.4;
             margin: 0 2px 6px;
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
             min-height: 2.8em;
         }
-        .card .price {
-            font-size: 17px; font-weight: 700;
-            margin: auto 2px 0;
-        }
+        .card .price { font-size: 17px; font-weight: 700; margin: 0 2px 10px; }
         .card .price small { font-size: 12px; font-weight: 400; color: var(--sub); }
-
-        .note {
-            text-align: center; color: var(--sub); font-size: 12px;
-            margin: 8px 0 0;
+        .btns { margin-top: auto; display: grid; gap: 6px; }
+        .btn {
+            display: block; text-align: center;
+            border: 1.5px solid var(--text);
+            border-radius: 980px;
+            padding: 8px 6px;
+            font-size: 13px; font-weight: 600;
+            color: var(--text);
         }
+        .btn.solid { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .btn.amazon { border-color: var(--sub); color: var(--sub); }
+
+        .credit { text-align: center; color: var(--sub); font-size: 11px; margin: 8px 0 0; }
 
         /* フッター */
-        footer {
-            padding: 28px 20px 48px;
-            color: var(--sub); font-size: 12px; line-height: 1.7;
-        }
+        footer { padding: 28px 20px 48px; color: var(--sub); font-size: 12px; line-height: 1.7; }
         footer nav { margin: 10px 0; display: flex; flex-wrap: wrap; gap: 14px; }
         footer nav a { color: var(--sub); text-decoration: underline; }
 
-        /* 広い画面では2段組に */
+        /* 広い画面では4列 */
         @media (min-width: 720px) {
             .hero { padding: 56px 32px 36px; max-width: 1100px; margin: 0 auto; }
             .hero h1 { font-size: 64px; }
             .section { max-width: 1100px; margin: 0 auto 20px; padding: 36px 32px 28px; }
             .grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
-            .card { padding: 14px 14px 18px; }
+            .card { padding: 14px 14px 16px; }
             .brand, .chips { max-width: 1100px; margin: 0 auto; padding-left: 32px; padding-right: 32px; }
             footer { max-width: 1100px; margin: 0 auto; padding: 28px 32px 48px; }
         }
@@ -194,66 +179,31 @@
         <p>旅先とスマホまわりで、いま欲しいものをカテゴリ別に。</p>
     </section>
 
-    <!-- スマホ周辺用品 -->
-    <section class="section" id="phone">
+    <section class="section" id="phone" data-cat="phone">
         <p class="eyebrow">PHONE & GADGET</p>
-        <div class="section-head">
-            <h2>スマホ周辺用品</h2>
-            <a class="more" href="#">すべて見る</a>
-        </div>
-        <div class="grid">
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">モバイルバッテリー（商品名は後で差し替え）</p><p class="price">¥ —</p></a>
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">急速充電ケーブル</p><p class="price">¥ —</p></a>
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">ワイヤレスイヤホン</p><p class="price">¥ —</p></a>
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">スマホスタンド</p><p class="price">¥ —</p></a>
-        </div>
-        <p class="note">※ 価格は楽天の商品情報から後で表示します</p>
+        <div class="section-head"><h2>スマホ周辺用品</h2></div>
+        <div class="grid"></div>
     </section>
 
-    <!-- 旅先スキンケア -->
-    <section class="section" id="skin">
+    <section class="section" id="skin" data-cat="skin">
         <p class="eyebrow">TRAVEL SKINCARE</p>
-        <div class="section-head">
-            <h2>旅先スキンケア用品</h2>
-            <a class="more" href="#">すべて見る</a>
-        </div>
-        <div class="grid">
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">持ち運びやすい化粧水</p><p class="price">¥ —</p></a>
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">日焼け止め（小容量）</p><p class="price">¥ —</p></a>
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">リップクリーム</p><p class="price">¥ —</p></a>
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">機内用フェイスミスト</p><p class="price">¥ —</p></a>
-        </div>
+        <div class="section-head"><h2>旅先スキンケア用品</h2></div>
+        <div class="grid"></div>
     </section>
 
-    <!-- バッグ・収納 -->
-    <section class="section" id="bag">
+    <section class="section" id="bag" data-cat="bag">
         <p class="eyebrow">BAG & STORAGE</p>
-        <div class="section-head">
-            <h2>バッグ・収納</h2>
-            <a class="more" href="#">すべて見る</a>
-        </div>
-        <div class="grid">
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">トラベルポーチ</p><p class="price">¥ —</p></a>
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">圧縮袋セット</p><p class="price">¥ —</p></a>
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">機内持ち込みバッグ</p><p class="price">¥ —</p></a>
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">小分けボトルセット</p><p class="price">¥ —</p></a>
-        </div>
+        <div class="section-head"><h2>バッグ・収納</h2></div>
+        <div class="grid"></div>
     </section>
 
-    <!-- 機内・移動 -->
-    <section class="section" id="comfort">
+    <section class="section" id="comfort" data-cat="comfort">
         <p class="eyebrow">COMFORT ON THE MOVE</p>
-        <div class="section-head">
-            <h2>機内・移動の快適グッズ</h2>
-            <a class="more" href="#">すべて見る</a>
-        </div>
-        <div class="grid">
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">ネックピロー</p><p class="price">¥ —</p></a>
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">アイマスク</p><p class="price">¥ —</p></a>
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">着圧ソックス</p><p class="price">¥ —</p></a>
-            <a class="card" href="#"><div class="img">商品画像</div><p class="name">ノイズキャンセリングイヤホン</p><p class="price">¥ —</p></a>
-        </div>
+        <div class="section-head"><h2>機内・移動の快適グッズ</h2></div>
+        <div class="grid"></div>
     </section>
+
+    <p class="credit">商品情報：楽天ウェブサービス</p>
 </main>
 
 <footer>
@@ -265,6 +215,63 @@
     </nav>
     <p>© 準備はOK？</p>
 </footer>
+
+<script>
+    const yen = (n) => (typeof n === 'number' ? '¥' + n.toLocaleString('ja-JP') : '価格準備中');
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    function renderCard(item) {
+        const img = item.image
+            ? `<img src="${esc(item.image)}" alt="${esc(item.label)}" loading="lazy">`
+            : `<span>商品画像</span>`;
+        const rakuten = item.rakutenUrl
+            ? `<a class="btn solid" href="${esc(item.rakutenUrl)}" target="_blank" rel="noopener sponsored">楽天で見る</a>`
+            : `<span class="btn solid" style="opacity:.5">楽天で見る</span>`;
+        const amazon = `<a class="btn amazon" href="${esc(item.amazonUrl)}" target="_blank" rel="noopener sponsored">Amazonで見る</a>`;
+        return `
+            <article class="card">
+                <div class="img">${img}</div>
+                <p class="name">${esc(item.name || item.label)}</p>
+                <p class="price">${yen(item.price)}</p>
+                <div class="btns">${rakuten}${amazon}</div>
+            </article>`;
+    }
+
+    function renderPlaceholder(label) {
+        return `
+            <article class="card">
+                <div class="img"><span>商品画像</span></div>
+                <p class="name">${esc(label)}</p>
+                <p class="price">価格準備中</p>
+            </article>`;
+    }
+
+    async function init() {
+        // 商品データ（楽天APIで取得済み）があればそれを表示。なければ候補名だけの仮表示。
+        const load = async (path) => {
+            try {
+                const res = await fetch(path, { cache: 'no-cache' });
+                return res.ok ? await res.json() : null;
+            } catch (e) { return null; }
+        };
+        const data = await load('data/products.json');
+        const config = data ? null : await load('config/products.json');
+
+        document.querySelectorAll('section[data-cat]').forEach(section => {
+            const grid = section.querySelector('.grid');
+            const id = section.dataset.cat;
+            if (data) {
+                const cat = data.categories.find(c => c.id === id);
+                grid.innerHTML = cat ? cat.items.map(renderCard).join('') : '';
+            } else if (config) {
+                const cat = config.categories.find(c => c.id === id);
+                grid.innerHTML = cat ? cat.items.map(i => renderPlaceholder(i.label)).join('') : '';
+            }
+        });
+    }
+
+    init();
+</script>
 
 </body>
 </html>
