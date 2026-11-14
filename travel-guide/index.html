@@ -515,16 +515,8 @@
 
 <div class="scrim" id="scrim"></div>
 <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="メニュー" inert>
-    <p class="d-label d-item" style="--i:0">CATEGORY</p>
-    <ul id="drawer-cats"></ul>
-    <p class="d-label d-item" style="--i:5">このサイトについて</p>
-    <ul>
-        <li class="d-item" style="--i:6"><a class="d-link small" href="#faq">よくある質問</a></li>
-        <li class="d-item" style="--i:7"><a class="d-link small" href="policy.html#affiliate">広告表記について</a></li>
-        <li class="d-item" style="--i:8"><a class="d-link small" href="policy.html#privacy">プライバシーポリシー</a></li>
-        <li class="d-item" style="--i:9"><a class="d-link small" href="policy.html#disclaimer">免責事項</a></li>
-    </ul>
-    <button class="theme-btn d-item" style="--i:10" type="button" data-theme-toggle></button>
+    <div id="drawer-nav"></div>
+    <button class="theme-btn d-item" type="button" data-theme-toggle></button>
 </div>
 
 <main>
@@ -814,8 +806,25 @@
     const header = $('#site-header');
     $('#mega-panel').innerHTML = CATS.map(c =>
         `<a class="mega-item" href="#${c.id}" data-nav="${c.id}">${ICON[c.id]}<span><b>${c.title}</b><small>${c.desc}</small></span></a>`).join('');
-    $('#drawer-cats').innerHTML = CATS.map((c, i) =>
-        `<li class="d-item" style="--i:${i + 1}"><a class="d-link" href="#${c.id}" data-nav="${c.id}">${ICON[c.id]}${c.title}</a></li>`).join('');
+    /* サイト全体のメニュー。ページを増やすときは、この配列に項目を足すだけでメニューに出ます。
+       href に #名前 を書くと同じページ内の場所へ、ファイル名（例: blog.html）を書くと別ページへ移動します。 */
+    const SITE_NAV = [
+        { title: 'カテゴリ', items: CATS.map(c => ({ title: c.title, href: '#' + c.id, nav: c.id, icon: ICON[c.id] })) },
+        { title: 'ページ', items: [
+            { title: 'よくある質問', href: '#faq', nav: 'faq' },
+            { title: '広告表記について', href: 'policy.html#affiliate' },
+            { title: 'プライバシーポリシー', href: 'policy.html#privacy' },
+            { title: '免責事項', href: 'policy.html#disclaimer' }
+        ] }
+    ];
+    const here = location.pathname.split('/').pop() || 'index.html';
+    let di = 0;
+    $('#drawer-nav').innerHTML = SITE_NAV.map(g => `
+        <p class="d-label d-item" style="--i:${di++}">${esc(g.title)}</p>
+        <ul>${g.items.map(it => {
+            const isHere = !it.href.startsWith('#') && it.href.split('#')[0] === here;
+            return `<li class="d-item" style="--i:${di++}"><a class="d-link${it.icon ? '' : ' small'}" href="${esc(it.href)}"${it.nav ? ` data-nav="${it.nav}"` : ''}${isHere ? ' aria-current="page"' : ''}>${it.icon || ''}${esc(it.title)}</a></li>`;
+        }).join('')}</ul>`).join('');
 
     const mega = $('#mega'), megaBtn = $('#mega-btn'), megaPanel = $('#mega-panel');
     let megaTimer, megaHoverAt = 0;
