@@ -1,6 +1,12 @@
 // 楽天商品検索APIから商品情報を取得し、data/products.json を作成します。
-// 使い方:  RAKUTEN_APP_ID=xxxx node scripts/fetch-products.mjs
-// 任意:    RAKUTEN_ACCESS_KEY (API側で必要になった場合)
+// 使い方:
+//   RAKUTEN_APP_ID=xxxx RAKUTEN_ACCESS_KEY=yyyy RAKUTEN_REFERER=https://<登録した許可サイトのURL>/ \
+//     node scripts/fetch-products.mjs
+//
+// - applicationId と accessKey は両方必要（片方だと400エラーになる報告あり）
+// - Referer は Rakuten Developers の「許可されたWebサイト」に登録したドメインと一致させる
+// - エンドポイントのバージョンは RAKUTEN_ENDPOINT で差し替え可能（公式の現行版を確認して設定）
+// - キーは環境変数に入れる。リポジトリにはコミットしない
 //
 // Amazon側は検索リンクのみ（PA-APIは審査後に利用可能になるため、後で差し替え）。
 
@@ -14,10 +20,12 @@ const outPath = resolve(root, 'data/products.json');
 
 const APP_ID = process.env.RAKUTEN_APP_ID;
 const ACCESS_KEY = process.env.RAKUTEN_ACCESS_KEY;
-const ENDPOINT = 'https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601';
+const REFERER = process.env.RAKUTEN_REFERER;
+const ENDPOINT = process.env.RAKUTEN_ENDPOINT
+    || 'https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601';
 
-if (!APP_ID) {
-    console.error('RAKUTEN_APP_ID が設定されていません。環境変数に入れてから実行してください。');
+if (!APP_ID || !ACCESS_KEY || !REFERER) {
+    console.error('RAKUTEN_APP_ID / RAKUTEN_ACCESS_KEY / RAKUTEN_REFERER を環境変数に設定してから実行してください。');
     process.exit(1);
 }
 
@@ -34,10 +42,10 @@ async function searchRakuten(keyword) {
         formatVersion: '2',
         format: 'json',
     });
-    if (ACCESS_KEY) params.set('accessKey', ACCESS_KEY);
+    params.set('accessKey', ACCESS_KEY);
     if (affiliate.rakutenAffiliateId) params.set('affiliateId', affiliate.rakutenAffiliateId);
 
-    const res = await fetch(`${ENDPOINT}?${params}`, { headers: { Referer: 'https://example.invalid/' } });
+    const res = await fetch(`${ENDPOINT}?${params}`, { headers: { Referer: REFERER } });
     if (!res.ok) throw new Error(`楽天API ${res.status}: ${keyword}`);
     const json = await res.json();
     const item = json.Items?.[0];
