@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="claude:viewport-fit-sides" content="cover">
+    <title>準備はOK？ | 旅行用品ガイド</title>
+    <meta name="description" content="旅先とスマホまわりの、いま欲しい旅行用品をカテゴリ別に。">
+    <style>
+        /* レイアウト：追従ヘッダー（ブランド行／カテゴリチップ／パンくず）→ ヒーロー → カテゴリごとの面 → FAQ。軽さ優先：フォントは端末標準、画像は遅延読み込み、商品は8件ずつ描画 */
+        :root {
+            --bg: #ffffff;
+            --panel: #f2f5f3;
+            --card: #ffffff;
+            --text: #17201c;
+            --sub: #66706b;
+            --line: #d5dbd7;
+            --accent: #2f5d50;
+            --on-accent: #ffffff;
+            --accent-soft: #e3eee9;
+            --img: #e6ebe8;
+            --glow-a: #cfe6dc;
+            --glow-b: #d9e6f2;
+            --scrim: rgba(23, 32, 28, .35);
+            --shadow: 0 14px 34px rgba(23, 32, 28, .13);
+
+            --font: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Helvetica Neue", Arial, sans-serif;
+            --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            --ease: cubic-bezier(.2, .8, .2, 1);
+
+            --brand-h: 52px;
+            --gl: max(16px, env(safe-area-inset-left, 0px));
+            --gr: max(16px, env(safe-area-inset-right, 0px));
+            --safe-t: env(safe-area-inset-top, 0px);
+            --anchor: 140px;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bg: #0b0d0c;
+                --panel: #161a18;
+                --card: #222725;
+                --text: #f2f5f3;
+                --sub: #a3ada8;
+                --line: #3a423e;
+                --accent: #7fb8a6;
+                --on-accent: #08130f;
+                --accent-soft: #1f2f29;
+                --img: #2f3633;
+                --glow-a: #173128;
+                --glow-b: #16242f;
+                --scrim: rgba(0, 0, 0, .55);
+                --shadow: 0 14px 34px rgba(0, 0, 0, .5);
+                color-scheme: dark;
+            }
+        }
+        :root[data-theme="dark"] {
+            --bg: #0b0d0c;
+            --panel: #161a18;
+            --card: #222725;
+            --text: #f2f5f3;
+            --sub: #a3ada8;
+            --line: #3a423e;
+            --accent: #7fb8a6;
+            --on-accent: #08130f;
+            --accent-soft: #1f2f29;
+            --img: #2f3633;
+            --glow-a: #173128;
+            --glow-b: #16242f;
+            --scrim: rgba(0, 0, 0, .55);
+            --shadow: 0 14px 34px rgba(0, 0, 0, .5);
+            color-scheme: dark;
+        }
+
+        * { box-sizing: border-box; }
+        [hidden] { display: none !important; }
+        html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 15px;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.7;
+        }
+        body.locked { overflow: hidden; }
+        body::before {
+            content: ""; position: fixed; inset: 0 0 auto; height: var(--safe-t);
+            z-index: 40; background: var(--bg);
+        }
+        a { color: inherit; text-decoration: none; }
+        button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+        ul, ol { list-style: none; margin: 0; padding: 0; }
+        h1, h2, h3, p { margin: 0; }
+        h1, h2, h3 { text-wrap: balance; }
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+        .wrap {
+            max-width: 1164px; margin-inline: auto;
+            padding-left: var(--gl); padding-right: var(--gr);
+        }
+        .eyebrow {
+            font-family: var(--mono); font-size: 11px; font-weight: 500;
+            color: var(--sub); letter-spacing: .12em;
+        }
+
+        @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
+        @keyframes lineUp { from { transform: translateY(105%); } }
+        @keyframes shimmer { to { transform: translateX(100%); } }
+
+        /* ===== ヘッダー ===== */
+        .top {
+            position: sticky; top: var(--safe-t); z-index: 30;
+            background: color-mix(in srgb, var(--bg) 86%, transparent);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid transparent;
+            transition: transform .35s var(--ease), border-color .3s;
+        }
+        .top.scrolled { border-bottom-color: var(--line); }
+        .top.compact { transform: translateY(calc(-1 * var(--brand-h))); }
+        .top.menu-open { background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; border-bottom-color: transparent; }
+        .top.menu-open .chips, .top.menu-open .crumbs { visibility: hidden; }
+
+        .bar { height: var(--brand-h); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+        .brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 900; font-size: 18px; min-height: 44px; }
+        .brand svg { width: 22px; height: 22px; color: var(--accent); }
+
+        .burger { position: relative; width: 44px; height: 44px; margin-right: -10px; border-radius: 50%; }
+        .burger span {
+            position: absolute; left: 12px; width: 20px; height: 2px; border-radius: 2px;
+            background: var(--text); transition: transform .35s var(--ease), opacity .2s;
+        }
+        .burger span:nth-child(1) { top: 15px; }
+        .burger span:nth-child(2) { top: 21px; }
+        .burger span:nth-child(3) { top: 27px; }
+        .burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; transform: scaleX(.2); }
+        .burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+        .pc-nav { display: none; }
+
+        .chips {
+            position: relative;
+            display: flex; gap: 8px;
+            overflow-x: auto; -webkit-overflow-scrolling: touch;
+            padding: 2px var(--gr) 8px var(--gl);
+            scrollbar-width: none;
+        }
+        .chips::-webkit-scrollbar { display: none; }
+        .chip {
+            position: relative; z-index: 1; flex: none;
+            display: inline-flex; align-items: center;
+            height: 40px; padding: 0 15px;
+            border: 1px solid var(--line); border-radius: 980px;
+            font-size: 14px; font-weight: 500;
+            transition: color .3s, border-color .3s;
+        }
+        .chip.active { color: var(--bg); border-color: transparent; }
+        .chip-ind {
+            position: absolute; left: 0; top: 2px; height: 40px; width: 0;
+            border-radius: 980px; background: var(--text); opacity: 0;
+            transition: transform .4s var(--ease), width .4s var(--ease), opacity .2s;
+        }
+
+        .crumbs { font-size: 12px; color: var(--sub); padding-bottom: 8px; }
+        .crumbs ol { display: flex; align-items: center; gap: 6px; min-height: 20px; }
+        .crumbs li { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+        .crumbs li + li::before { content: "›"; opacity: .7; }
+        .crumbs a { text-decoration: underline; text-underline-offset: 3px; }
+        .crumbs [aria-current] { color: var(--text); font-weight: 700; }
+
+        /* ===== ドロワー（スマホ） ===== */
+        .scrim {
+            position: fixed; inset: 0; z-index: 24;
+            background: var(--scrim); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            opacity: 0; visibility: hidden;
+            transition: opacity .35s, visibility 0s .35s;
+        }
+        .scrim.open { opacity: 1; visibility: visible; transition-delay: 0s; }
+        .drawer {
+            position: fixed; inset: 0 0 0 auto; z-index: 25;
+            width: min(100%, 420px);
+            background: var(--bg);
+            padding: calc(var(--safe-t) + var(--brand-h) + 12px) var(--gr) calc(env(safe-area-inset-bottom, 0px) + 28px) max(20px, var(--gl));
+            overflow-y: auto; overscroll-behavior: contain;
+            transform: translateX(100%); visibility: hidden;
+            transition: transform .42s var(--ease), visibility 0s .42s;
+        }
+        .drawer.open { transform: none; visibility: visible; transition-delay: 0s; }
+        .drawer.open .d-item { animation: rise .5s var(--ease) backwards; animation-delay: calc(var(--i, 0) * 45ms + 90ms); }
+        .d-label { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--sub); margin: 20px 0 4px; }
+        .d-link {
+            display: flex; align-items: center; gap: 14px;
+            min-height: 56px; border-bottom: 1px solid var(--line);
+            font-size: 20px; font-weight: 700;
+        }
+        .d-link.small { font-size: 15px; font-weight: 500; min-height: 48px; }
+        .d-link svg { width: 24px; height: 24px; color: var(--accent); flex: none; }
+        .d-link::after { content: "→"; margin-left: auto; color: var(--sub); font-weight: 400; transition: transform .25s var(--ease); }
+        .d-link:active::after { transform: translateX(4px); }
+        .d-link[aria-current="true"] { color: var(--accent); }
+
+        .theme-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            min-height: 44px; padding: 0 16px;
+            border: 1px solid var(--line); border-radius: 980px;
+            font-size: 13px; font-weight: 500;
+            transition: transform .15s var(--ease), background-color .2s;
+        }
+        .theme-btn:active { transform: scale(.96); }
+        .theme-btn svg { width: 16px; height: 16px; }
+        .drawer .theme-btn { margin-top: 24px; }
+
+        /* ===== ヒーロー ===== */
+        .hero { position: relative; overflow: hidden; }
+        .hero-bg { position: absolute; inset: 0; pointer-events: none; }
+        .hero-bg i {
+            position: absolute; width: 70vmax; height: 70vmax; border-radius: 50%;
+        }
+        .hero-bg i:nth-child(1) { left: -30vmax; top: -42vmax; background: radial-gradient(closest-side, var(--glow-a), transparent); }
+        .hero-bg i:nth-child(2) { right: -34vmax; top: -30vmax; background: radial-gradient(closest-side, var(--glow-b), transparent); }
+        .hero-in { position: relative; padding-block: 44px 36px; }
+        .hero .eyebrow { animation: rise .7s var(--ease) backwards; }
+        .hero h1 {
+            font-size: clamp(52px, 15vw, 64px); line-height: 1.08; font-weight: 900;
+            letter-spacing: -.01em; margin: 10px 0 14px;
+        }
+        .hero .line { display: block; overflow: hidden; padding-block: .06em; }
+        .hero .line > span { display: inline-block; animation: lineUp .9s var(--ease) backwards; }
+        .hero .line:nth-child(2) > span { animation-delay: .12s; }
+        .hero .lead { color: var(--sub); font-size: 16px; max-width: 30em; animation: rise .8s var(--ease) .25s backwards; }
+
+        /* ===== カテゴリ面 ===== */
+        .stack { display: grid; gap: 16px; }
+        .stack > * { min-width: 0; }
+        .section {
+            background: var(--panel);
+            border-radius: 28px;
+            padding: 26px 12px 16px;
+            scroll-margin-top: var(--anchor);
+        }
+        .section > .eyebrow { margin: 0 4px 4px; }
+        .section-head {
+            position: relative; z-index: 2;
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px;
+            margin: 0 4px 16px;
+        }
+        .section h2 { font-size: 24px; line-height: 1.3; font-weight: 900; }
+        .section-lead { color: var(--sub); font-size: 14px; margin: -8px 4px 16px; max-width: 40em; }
+
+        .reveal.in { animation: rise .7s var(--ease) backwards; }
+
+        /* 並び替えプルダウン */
+        .sort { position: relative; }
+        .sort-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            min-height: 44px; padding: 0 14px 0 16px;
+            background: var(--card); border: 1px solid var(--line); border-radius: 980px;
+            font-size: 13px; font-weight: 500;
+            transition: transform .15s var(--ease), border-color .2s;
+        }
+        .sort-btn:active { transform: scale(.97); }
+        .sort-btn .k { color: var(--sub); }
+        .chev { width: 12px; height: 12px; flex: none; transition: transform .3s var(--ease); }
+        [aria-expanded="true"] > .chev { transform: rotate(180deg); }
+        .sort-list {
+            position: absolute; right: 0; top: calc(100% + 6px); z-index: 5;
+            min-width: 190px; padding: 6px;
+            background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+            box-shadow: var(--shadow);
+            opacity: 0; visibility: hidden; transform: translateY(-6px) scale(.98); transform-origin: top right;
+            transition: opacity .2s, transform .25s var(--ease), visibility 0s .25s;
+        }
+        .sort-list.open { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+        .sort-list li {
+            display: flex; align-items: center; gap: 8px;
+            min-height: 44px; padding: 0 12px; border-radius: 10px;
+            font-size: 14px; cursor: pointer;
+        }
+        .sort-list li::before { content: ""; width: 14px; height: 8px; flex: none; }
+        .sort-list li[aria-selected="true"] { font-weight: 700; }
+        .sort-list li[aria-selected="true"]::before {
+            height: 5px; width: 10px; margin: 0 2px 3px;
+            border-left: 2px solid var(--accent); border-bottom: 2px solid var(--accent); transform: rotate(-45deg);
+        }
+        .sort-list li:hover, .sort-list li:focus-visible { background: var(--accent-soft); outline: none; }
+        .sort-list li[aria-disabled="true"] { color: var(--sub); opacity: .55; cursor: default; background: none; }
+
+        /* 商品グリッド：スマホは2列 */
+        .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .grid.in > .card.enter { animation: rise .6s var(--ease) backwards; animation-delay: calc(var(--i, 0) * 60ms); }
+        .card {
+            position: relative;
+            background: var(--card);
+            border-radius: 18px;
+            padding: 10px 10px 12px;
+            display: flex; flex-direction: column;
+            transition: transform .35s var(--ease);
+        }
+        .card::after {
+            content: ""; position: absolute; inset: 0; border-radius: inherit;
+            box-shadow: var(--shadow); opacity: 0; pointer-events: none;
+            transition: opacity .35s var(--ease);
+        }
+        .card .img {
+            aspect-ratio: 1 / 1; max-width: 100%;
+            border-radius: 12px;
+            background: var(--img);
+            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 10px;
+        }
+        .card .img img { width: 100%; height: 100%; object-fit: contain; transition: transform .5s var(--ease); }
+        .card .img span { color: var(--sub); font-size: 12px; }
+        .card .name {
+            font-size: 14px; line-height: 1.45; font-weight: 500;
+            margin: 0 2px 6px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+            min-height: 2.9em;
+        }
+        .card .price { font-size: 17px; font-weight: 700; margin: 0 2px 10px; font-variant-numeric: tabular-nums; }
+        .card .price small { font-size: 12px; font-weight: 400; color: var(--sub); }
+        .btns { margin-top: auto; display: grid; gap: 6px; }
+        .btn {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 44px;
+            border: 1.5px solid var(--text);
+            border-radius: 980px;
+            padding: 6px;
+            font-size: 13px; font-weight: 700;
+            color: var(--text);
+            transition: transform .15s var(--ease), filter .2s;
+        }
+        .btn:active { transform: scale(.95); }
+        .btn.solid { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+        .btn.amazon { border-color: var(--sub); color: var(--sub); }
+        @media (hover: hover) {
+            .card:hover { transform: translateY(-4px); }
+            .card:hover::after { opacity: 1; }
+            .card:hover .img img { transform: scale(1.05); }
+            a.btn:hover { filter: brightness(1.08); }
+        }
+        .card:active { transform: translateY(-2px); }
+
+        .more-btn {
+            display: flex; align-items: center; margin: 16px auto 0;
+            min-height: 44px; padding: 0 24px;
+            border: 1.5px solid var(--text); border-radius: 980px;
+            font-size: 14px; font-weight: 700;
+            transition: transform .15s var(--ease);
+        }
+        .more-btn:active { transform: scale(.96); }
+
+        /* 読み込み中のスケルトン */
+        .skel i { display: block; position: relative; overflow: hidden; background: var(--img); border-radius: 8px; }
+        .skel i::after {
+            content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+            background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--card) 70%, transparent), transparent);
+            animation: shimmer 1.4s infinite;
+        }
+        .skel .s-img { aspect-ratio: 1 / 1; border-radius: 12px; margin-bottom: 12px; }
+        .skel .s-l1 { height: 14px; margin: 0 2px 8px; }
+        .skel .s-l2 { height: 14px; width: 60%; margin: 0 2px 14px; }
+        .skel .s-btn { height: 44px; border-radius: 980px; }
+        .empty { grid-column: 1 / -1; color: var(--sub); font-size: 14px; padding: 20px 4px; }
+
+        .credit { text-align: center; color: var(--sub); font-size: 11px; margin: 4px 0 0; }
+
+        /* ===== アコーディオン共通 ===== */
+        .acc > summary {
+            display: flex; align-items: center; gap: 12px;
+            min-height: 56px; cursor: pointer; list-style: none;
+            font-weight: 700;
+        }
+        .acc > summary::-webkit-details-marker { display: none; }
+        .acc > summary .chev { margin-left: auto; width: 14px; height: 14px; color: var(--sub); }
+        .acc.is-open > summary .chev { transform: rotate(180deg); }
+        .acc-body { overflow: hidden; }
+
+        /* ===== FAQ ===== */
+        .faq-list { margin: 0 4px; border-bottom: 1px solid var(--line); }
+        .faq-list .acc { border-top: 1px solid var(--line); }
+        .faq-list .acc > summary { font-size: 16px; padding-block: 8px; }
+        .faq-list .acc-body p { color: var(--sub); padding: 0 28px 20px 0; max-width: 44em; }
+
+        /* ===== フッター ===== */
+        footer { padding-block: 28px 56px; color: var(--sub); font-size: 12px; line-height: 1.8; }
+        footer > p { max-width: 60em; }
+        .foot-acc { margin: 12px 0; border-block: 1px solid var(--line); }
+        .foot-acc > summary { min-height: 48px; font-size: 13px; color: var(--text); }
+        footer nav { display: grid; padding-bottom: 8px; }
+        footer nav a { display: flex; align-items: center; min-height: 44px; color: var(--sub); text-decoration: underline; text-underline-offset: 3px; }
+
+        /* ===== ページ上部へ ===== */
+        .to-top {
+            position: fixed; z-index: 20;
+            right: max(16px, env(safe-area-inset-right, 0px));
+            bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+            width: 48px; height: 48px; border-radius: 50%;
+            display: grid; place-items: center;
+            background: var(--card); box-shadow: var(--shadow);
+            opacity: 0; transform: translateY(14px) scale(.9); pointer-events: none;
+            transition: opacity .3s, transform .35s var(--ease);
+        }
+        .to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+        .to-top:active { transform: scale(.92); }
+        .to-top svg { grid-area: 1 / 1; }
+        .to-top .ring { width: 48px; height: 48px; transform: rotate(-90deg); }
+        .to-top .ring circle { fill: none; stroke-width: 3; }
+        .to-top .ring .track { stroke: var(--line); }
+        .to-top .ring .prog { stroke: var(--accent); stroke-linecap: round; stroke-dasharray: 131.95; stroke-dashoffset: 131.95; }
+        .to-top .arr { width: 18px; height: 18px; }
+
+        /* ===== 720px〜：4列＋PCナビ ===== */
+        @media (min-width: 720px) {
+            :root {
+                --brand-h: 64px;
+                --gl: max(32px, env(safe-area-inset-left, 0px));
+                --gr: max(32px, env(safe-area-inset-right, 0px));
+                --anchor: 116px;
+            }
+            .burger, .chips { display: none; }
+            .top.compact { transform: none; }
+            .brand { font-size: 20px; }
+            .pc-nav { display: flex; align-items: center; gap: 4px; }
+            .pc-nav > a, .mega-btn {
+                display: inline-flex; align-items: center; gap: 6px;
+                min-height: 44px; padding: 0 14px; border-radius: 980px;
+                font-size: 14px; font-weight: 500;
+                transition: background-color .2s;
+            }
+            .pc-nav > a:hover, .mega-btn:hover, .mega-btn[aria-expanded="true"] { background: var(--panel); }
+            .pc-nav .theme-btn { margin-left: 8px; }
+            .mega { position: relative; }
+            .mega-panel {
+                position: absolute; left: -12px; top: calc(100% + 8px);
+                width: 560px; padding: 10px;
+                display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+                background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+                box-shadow: var(--shadow);
+                opacity: 0; visibility: hidden; transform: translateY(-8px) scale(.98); transform-origin: top left;
+                transition: opacity .2s, transform .3s var(--ease), visibility 0s .3s;
+            }
+            .mega-panel::before { content: ""; position: absolute; inset: -10px 0 auto; height: 10px; }
+            .mega-panel.open { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+            .mega-item { display: flex; gap: 12px; padding: 14px; border-radius: 14px; transition: background-color .2s; }
+            .mega-item:hover, .mega-item:focus-visible { background: var(--accent-soft); }
+            .mega-item svg { width: 26px; height: 26px; flex: none; color: var(--accent); margin-top: 2px; transition: transform .3s var(--ease); }
+            .mega-item:hover svg { transform: translateY(-2px) scale(1.08); }
+            .mega-item b { display: block; font-size: 15px; line-height: 1.4; }
+            .mega-item small { display: block; font-size: 12px; color: var(--sub); line-height: 1.5; margin-top: 2px; }
+            .mega-item[aria-current="true"] b { color: var(--accent); }
+
+            .hero-in { padding-block: 72px 56px; }
+            .hero h1 { font-size: 80px; }
+            .hero .lead { font-size: 18px; }
+            .stack { gap: 20px; }
+            .section { padding: 36px 28px 28px; }
+            .section h2 { font-size: 30px; }
+            .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+            .card { padding: 14px 14px 16px; }
+            .foot-acc { border: 0; }
+            .foot-acc > summary { display: none; }
+            footer nav { display: flex; flex-wrap: wrap; gap: 0 20px; padding: 0; }
+        }
+        /* ===== 1100px〜：ゆとりを足す ===== */
+        @media (min-width: 1100px) {
+            .hero-in { padding-block: 96px 72px; }
+            .hero h1 { font-size: 104px; }
+            .section { padding: 44px 36px 36px; }
+            .grid { gap: 20px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="top" id="site-header">
+    <div class="bar wrap">
+        <a class="brand" href="#top">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M8 12.5l3 3 5.5-6.5"/></svg>
+            準備はOK？
+        </a>
+        <nav class="pc-nav" aria-label="メインメニュー">
+            <div class="mega" id="mega">
+                <button class="mega-btn" id="mega-btn" type="button" aria-expanded="false" aria-controls="mega-panel">
+                    カテゴリ
+                    <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg>
+                </button>
+                <div class="mega-panel" id="mega-panel"></div>
+            </div>
+            <a href="#faq">よくある質問</a>
+            <button class="theme-btn" type="button" data-theme-toggle></button>
+        </nav>
+        <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="メニューを開く">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+    <nav class="chips" id="chips" aria-label="カテゴリ">
+        <span class="chip-ind" aria-hidden="true"></span>
+        <a class="chip" href="#phone">スマホ周辺</a>
+        <a class="chip" href="#skin">旅先スキンケア</a>
+        <a class="chip" href="#bag">バッグ・収納</a>
+        <a class="chip" href="#comfort">機内・移動</a>
+        <a class="chip" href="#faq">よくある質問</a>
+    </nav>
+    <nav class="crumbs wrap" aria-label="パンくずリスト">
+        <ol id="crumbs"><li aria-current="page">ホーム</li></ol>
+    </nav>
+</header>
+
+<div class="scrim" id="scrim"></div>
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="メニュー" inert>
+    <p class="d-label d-item" style="--i:0">CATEGORY</p>
+    <ul id="drawer-cats"></ul>
+    <p class="d-label d-item" style="--i:5">このサイトについて</p>
+    <ul>
+        <li class="d-item" style="--i:6"><a class="d-link small" href="#faq">よくある質問</a></li>
+        <li class="d-item" style="--i:7"><a class="d-link small" href="policy.html#affiliate">広告表記について</a></li>
+        <li class="d-item" style="--i:8"><a class="d-link small" href="policy.html#privacy">プライバシーポリシー</a></li>
+        <li class="d-item" style="--i:9"><a class="d-link small" href="policy.html#disclaimer">免責事項</a></li>
+    </ul>
+    <button class="theme-btn d-item" style="--i:10" type="button" data-theme-toggle></button>
+</div>
+
+<main>
+    <section class="hero" id="top">
+        <div class="hero-bg" aria-hidden="true"><i></i><i></i></div>
+        <div class="hero-in wrap">
+            <p class="eyebrow">TRAVEL GEAR GUIDE</p>
+            <h1><span class="line"><span>準備は、</span></span><span class="line"><span>OK？</span></span></h1>
+            <p class="lead">旅先とスマホまわりで、いま欲しいものをカテゴリ別に。</p>
+        </div>
+    </section>
+
+    <div class="wrap stack">
+        <section class="section reveal" id="phone" data-cat="phone">
+            <p class="eyebrow">PHONE & GADGET</p>
+            <div class="section-head"><h2>スマホ周辺用品</h2></div>
+            <div class="grid"></div>
+        </section>
+
+        <section class="section reveal" id="skin" data-cat="skin">
+            <p class="eyebrow">TRAVEL SKINCARE</p>
+            <div class="section-head"><h2>旅先スキンケア用品</h2></div>
+            <div class="grid"></div>
+        </section>
+
+        <section class="section reveal" id="bag" data-cat="bag">
+            <p class="eyebrow">BAG & STORAGE</p>
+            <div class="section-head"><h2>バッグ・収納</h2></div>
+            <div class="grid"></div>
+        </section>
+
+        <section class="section reveal" id="comfort" data-cat="comfort">
+            <p class="eyebrow">COMFORT ON THE MOVE</p>
+            <div class="section-head"><h2>機内・移動の快適グッズ</h2></div>
+            <div class="grid"></div>
+        </section>
+
+        <p class="credit">商品情報：楽天ウェブサービス</p>
+
+        <section class="section reveal" id="faq">
+            <p class="eyebrow">FAQ</p>
+            <div class="section-head"><h2>よくある質問</h2></div>
+            <div class="faq-list">
+                <details class="acc">
+                    <summary>掲載されている価格は最新ですか？<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg></summary>
+                    <div class="acc-body"><p>価格は商品情報を取得した時点のものです。最新の価格や在庫は、リンク先のショップでご確認ください。</p></div>
+                </details>
+                <details class="acc">
+                    <summary>ボタンを押すとどこに移動しますか？<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg></summary>
+                    <div class="acc-body"><p>「楽天で見る」は楽天市場、「Amazonで見る」はAmazonのページが新しいタブで開きます。このサイト上で購入手続きを行うことはありません。</p></div>
+                </details>
+                <details class="acc">
+                    <summary>リンクは広告（PR）ですか？<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg></summary>
+                    <div class="acc-body"><p>現在は紹介料が発生しない通常のリンクです。今後アフィリエイトプログラムに参加した場合は、このサイトで告知し、広告（PR）と明示します。</p></div>
+                </details>
+                <details class="acc">
+                    <summary>商品情報はどこから取得していますか？<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg></summary>
+                    <div class="acc-body"><p>商品名・画像・価格は楽天ウェブサービスの情報を利用しています。</p></div>
+                </details>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer class="wrap">
+    <p>掲載している商品リンクは、現在は紹介料が発生しない通常のリンクです。今後アフィリエイトプログラムに参加した場合は、このサイトで告知し、広告（PR）と明示します。</p>
+    <details class="acc foot-acc" id="foot-acc">
+        <summary>このサイトについて<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg></summary>
+        <div class="acc-body">
+            <nav aria-label="サイト情報">
+                <a href="policy.html#affiliate">広告表記について</a>
+                <a href="policy.html#privacy">プライバシーポリシー</a>
+                <a href="policy.html#disclaimer">免責事項</a>
+            </nav>
+        </div>
+    </details>
+    <p>© 準備はOK？</p>
+</footer>
+
+<button class="to-top" id="to-top" type="button" aria-label="ページの先頭へ戻る" inert>
+    <svg class="ring" viewBox="0 0 48 48" aria-hidden="true"><circle class="track" cx="24" cy="24" r="21"/><circle class="prog" id="ring" cx="24" cy="24" r="21"/></svg>
+    <svg class="arr" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14.5v-11M4.5 8L9 3.5 13.5 8"/></svg>
+</button>
+
+<script type="application/ld+json" id="ld-crumbs"></script>
+
+<script>
+    const $ = (s, r = document) => r.querySelector(s);
+    const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+    const EASE = 'cubic-bezier(.2,.8,.2,1)';
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const wide = matchMedia('(min-width: 720px)');
+    const store = {
+        get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+    };
+
+    const yen = (n) => (typeof n === 'number' ? '¥' + n.toLocaleString('ja-JP') : '価格準備中');
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    const svg = (inner) => `<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+    const CHEV = '<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg>';
+    const ICON = {
+        phone: svg('<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 17.5h2"/>'),
+        skin: svg('<path d="M12 3.5c3 3.6 5.5 6.6 5.5 10a5.5 5.5 0 0 1-11 0c0-3.4 2.5-6.4 5.5-10z"/>'),
+        bag: svg('<rect x="5" y="8" width="14" height="12" rx="2.5"/><path d="M9 8V6.5A2.5 2.5 0 0 1 11.5 4h1A2.5 2.5 0 0 1 15 6.5V8M9 12v4M15 12v4"/>'),
+        comfort: svg('<path d="M3 12.5l18-7-5.5 14-3.4-5.4z"/><path d="M12.1 14.1L21 5.5"/>'),
+    };
+    const CATS = [
+        { id: 'phone', title: 'スマホ周辺用品', desc: '充電・イヤホン・スタンドなど' },
+        { id: 'skin', title: '旅先スキンケア用品', desc: '機内に持ち込める小さめサイズ' },
+        { id: 'bag', title: 'バッグ・収納', desc: 'ポーチや圧縮袋で荷物をすっきり' },
+        { id: 'comfort', title: '機内・移動の快適グッズ', desc: '長い移動時間をらくにする道具' }
+    ];
+    const NAMES = Object.fromEntries(CATS.map(c => [c.id, c.title]));
+    NAMES.faq = 'よくある質問';
+
+    /* ---------- 商品カード ---------- */
+    function renderCard(item) {
+        const img = item.image
+            ? `<img src="${esc(item.image)}" alt="${esc(item.label)}" loading="lazy" decoding="async">`
+            : `<span>商品画像</span>`;
+        const rakuten = item.rakutenUrl
+            ? `<a class="btn solid" href="${esc(item.rakutenUrl)}" target="_blank" rel="noopener sponsored">楽天で見る</a>`
+            : `<span class="btn solid" style="opacity:.5">楽天で見る</span>`;
+        const amazon = `<a class="btn amazon" href="${esc(item.amazonUrl)}" target="_blank" rel="noopener sponsored">Amazonで見る</a>`;
+        return `
+            <article class="card">
+                <div class="img">${img}</div>
+                <p class="name">${esc(item.name || item.label)}</p>
+                <p class="price">${yen(item.price)}</p>
+                <div class="btns">${rakuten}${amazon}</div>
+            </article>`;
+    }
+
+    function renderPlaceholder(label) {
+        return `
+            <article class="card">
+                <div class="img"><span>商品画像</span></div>
+                <p class="name">${esc(label)}</p>
+                <p class="price">価格準備中</p>
+            </article>`;
+    }
+
+    const SKELETON = Array.from({ length: 4 }, (_, i) =>
+        `<div class="card skel" style="--i:${i}" aria-hidden="true"><i class="s-img"></i><i class="s-l1"></i><i class="s-l2"></i><i class="s-btn"></i></div>`).join('');
+
+    /* ---------- 並び替えプルダウン ---------- */
+    const SORTS = [
+        { v: 'rec', label: 'おすすめ順' },
+        { v: 'low', label: '価格が安い順', price: true },
+        { v: 'high', label: '価格が高い順', price: true },
+        { v: 'name', label: '名前順' }
+    ];
+    const openLists = new Set();
+    function closeSort(sort, focusBtn) {
+        const list = $('.sort-list', sort), btn = $('.sort-btn', sort);
+        list.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        openLists.delete(sort);
+        if (focusBtn) btn.focus();
+    }
+    const PAGE = 8; // 一度に描画する件数。商品が増えても最初の表示を軽く保つ
+    function setupSection(section, items, render) {
+        const id = section.dataset.cat;
+        const grid = $('.grid', section);
+        const hasPrice = items.some(i => typeof i.price === 'number');
+        const key = (i) => String(items[i].name || items[i].label || '');
+        const price = (i, miss) => (typeof items[i].price === 'number' ? items[i].price : miss);
+        const els = new Map(), tpl = document.createElement('template');
+        let order = items.map((_, i) => i), shown = Math.min(PAGE, items.length);
+        const getEl = (i) => {
+            if (!els.has(i)) {
+                tpl.innerHTML = render(items[i]).trim();
+                const el = tpl.content.firstElementChild;
+                el.addEventListener('animationend', (e) => { if (e.target === el) el.classList.remove('enter'); });
+                els.set(i, el);
+            }
+            return els.get(i);
+        };
+        const more = document.createElement('button');
+        more.type = 'button'; more.className = 'more-btn'; more.hidden = true;
+        grid.after(more);
+        more.addEventListener('click', () => { shown = Math.min(items.length, shown + PAGE); paint(false); });
+        function paint(flip) {
+            const old = [...grid.children];
+            const before = new Map(flip && !reduced.matches ? old.map(el => [el, el.getBoundingClientRect()]) : []);
+            const next = order.slice(0, shown).map(getEl);
+            let fresh = 0;
+            next.forEach(el => { if (!el.isConnected) { el.style.setProperty('--i', fresh++); el.classList.add('enter'); } });
+            old.forEach(el => { if (!next.includes(el)) grid.removeChild(el); });
+            next.forEach((el, n) => { if (grid.children[n] !== el) grid.insertBefore(el, grid.children[n] || null); });
+            before.forEach((a, el) => {
+                if (!el.isConnected) return;
+                const b = el.getBoundingClientRect(), dx = a.left - b.left, dy = a.top - b.top;
+                if (dx || dy) el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { duration: 450, easing: EASE });
+            });
+            const rest = items.length - shown;
+            more.hidden = rest <= 0;
+            more.textContent = `もっと見る（残り${rest}件）`;
+        }
+        grid.innerHTML = '';
+        paint(false);
+
+        const sort = document.createElement('div');
+        sort.className = 'sort';
+        sort.innerHTML = `
+            <button class="sort-btn" type="button" id="sort-${id}" aria-haspopup="listbox" aria-expanded="false" aria-controls="sort-list-${id}">
+                <span class="k">並び替え</span><span class="v">おすすめ順</span>${CHEV}
+            </button>
+            <ul class="sort-list" id="sort-list-${id}" role="listbox" aria-label="${esc(NAMES[id])}の並び替え">
+                ${SORTS.map(s => `<li role="option" tabindex="-1" data-v="${s.v}" aria-selected="${s.v === 'rec'}"${s.price && !hasPrice ? ' aria-disabled="true" title="価格の準備ができると選べます"' : ''}>${s.label}</li>`).join('')}
+            </ul>`;
+        $('.section-head', section).appendChild(sort);
+
+        const btn = $('.sort-btn', sort), list = $('.sort-list', sort);
+        const opts = $$('li', list);
+        const usable = () => opts.filter(o => o.getAttribute('aria-disabled') !== 'true');
+        const open = () => {
+            openLists.forEach(s => closeSort(s));
+            list.classList.add('open');
+            btn.setAttribute('aria-expanded', 'true');
+            openLists.add(sort);
+            (opts.find(o => o.getAttribute('aria-selected') === 'true') || opts[0]).focus();
+        };
+        const choose = (opt) => {
+            if (opt.getAttribute('aria-disabled') === 'true') return;
+            opts.forEach(o => o.setAttribute('aria-selected', String(o === opt)));
+            $('.v', btn).textContent = opt.textContent;
+            closeSort(sort, true);
+            apply(opt.dataset.v);
+        };
+        const apply = (v) => {
+            order = items.map((_, i) => i).sort((a, b) =>
+                v === 'low' ? price(a, Infinity) - price(b, Infinity) || a - b
+                : v === 'high' ? price(b, -Infinity) - price(a, -Infinity) || a - b
+                : v === 'name' ? key(a).localeCompare(key(b), 'ja') || a - b
+                : a - b);
+            paint(true);
+        };
+        btn.addEventListener('click', () => (list.classList.contains('open') ? closeSort(sort) : open()));
+        btn.addEventListener('keydown', (e) => { if (e.key === 'ArrowDown') { e.preventDefault(); open(); } });
+        list.addEventListener('click', (e) => { const o = e.target.closest('li'); if (o) choose(o); });
+        list.addEventListener('keydown', (e) => {
+            const u = usable(), i = u.indexOf(document.activeElement);
+            if (e.key === 'ArrowDown') { e.preventDefault(); u[(i + 1) % u.length].focus(); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); u[(i - 1 + u.length) % u.length].focus(); }
+            else if (e.key === 'Home') { e.preventDefault(); u[0].focus(); }
+            else if (e.key === 'End') { e.preventDefault(); u[u.length - 1].focus(); }
+            else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (i >= 0) choose(u[i]); }
+            else if (e.key === 'Escape') { e.stopPropagation(); closeSort(sort, true); }
+            else if (e.key === 'Tab') closeSort(sort);
+        });
+    }
+    document.addEventListener('pointerdown', (e) => {
+        openLists.forEach(s => { if (!s.contains(e.target)) closeSort(s); });
+    });
+
+    async function init() {
+        $$('section[data-cat] .grid').forEach(g => { g.innerHTML = SKELETON; });
+
+        // 商品データ（楽天APIで取得済み）があればそれを表示。なければ候補名だけの仮表示。
+        const load = async (path) => {
+            try {
+                const res = await fetch(path, { cache: 'no-cache' });
+                return res.ok ? await res.json() : null;
+            } catch (e) { return null; }
+        };
+        const data = await load('data/products.json');
+        const config = data ? null : await load('config/products.json');
+
+        document.querySelectorAll('section[data-cat]').forEach(section => {
+            const grid = section.querySelector('.grid');
+            const id = section.dataset.cat;
+            const source = data || config;
+            const cat = source && Array.isArray(source.categories) ? source.categories.find(c => c.id === id) : null;
+            const items = cat && Array.isArray(cat.items) ? cat.items : [];
+            if (!items.length) {
+                grid.innerHTML = `<p class="empty">${source ? 'このカテゴリの商品は準備中です。' : '商品を読み込めませんでした。時間をおいて、ページを再読み込みしてください。'}</p>`;
+                return;
+            }
+            setupSection(section, items, data ? renderCard : (i) => renderPlaceholder(i.label));
+        });
+    }
+
+    /* ---------- ナビ（メガメニュー／ドロワー） ---------- */
+    const header = $('#site-header');
+    $('#mega-panel').innerHTML = CATS.map(c =>
+        `<a class="mega-item" href="#${c.id}" data-nav="${c.id}">${ICON[c.id]}<span><b>${c.title}</b><small>${c.desc}</small></span></a>`).join('');
+    $('#drawer-cats').innerHTML = CATS.map((c, i) =>
+        `<li class="d-item" style="--i:${i + 1}"><a class="d-link" href="#${c.id}" data-nav="${c.id}">${ICON[c.id]}${c.title}</a></li>`).join('');
+
+    const mega = $('#mega'), megaBtn = $('#mega-btn'), megaPanel = $('#mega-panel');
+    let megaTimer, megaHoverAt = 0;
+    const setMega = (on) => {
+        megaPanel.classList.toggle('open', on);
+        megaBtn.setAttribute('aria-expanded', String(on));
+    };
+    megaPanel.inert = true;
+    const megaOpen = (on) => { setMega(on); megaPanel.inert = !on; };
+    if (matchMedia('(hover: hover)').matches) {
+        mega.addEventListener('mouseenter', () => { clearTimeout(megaTimer); if (!megaPanel.classList.contains('open')) { megaHoverAt = Date.now(); megaOpen(true); } });
+        mega.addEventListener('mouseleave', () => { megaTimer = setTimeout(() => megaOpen(false), 180); });
+    }
+    megaBtn.addEventListener('click', () => {
+        if (Date.now() - megaHoverAt < 400) return;
+        megaOpen(!megaPanel.classList.contains('open'));
+    });
+    megaPanel.addEventListener('click', (e) => { if (e.target.closest('a')) megaOpen(false); });
+    mega.addEventListener('focusout', (e) => { if (!mega.contains(e.relatedTarget)) megaOpen(false); });
+    document.addEventListener('pointerdown', (e) => { if (!mega.contains(e.target)) megaOpen(false); });
+
+    const burger = $('#burger'), drawer = $('#drawer'), scrim = $('#scrim');
+    const behind = [$('main'), $('footer'), $('#chips'), $('.crumbs'), $('#to-top')];
+    let drawerOpen = false;
+    function setDrawer(on, restoreFocus = true) {
+        if (on === drawerOpen) return;
+        drawerOpen = on;
+        drawer.classList.toggle('open', on);
+        scrim.classList.toggle('open', on);
+        header.classList.toggle('menu-open', on);
+        if (on) header.classList.remove('compact');
+        document.body.classList.toggle('locked', on);
+        drawer.inert = !on;
+        behind.forEach(el => { if (el !== $('#to-top') || on) el.inert = on; });
+        burger.setAttribute('aria-expanded', String(on));
+        burger.setAttribute('aria-label', on ? 'メニューを閉じる' : 'メニューを開く');
+        if (on) drawer.scrollTop = 0;
+        else { if (restoreFocus) burger.focus(); onScroll(); }
+    }
+    burger.addEventListener('click', () => setDrawer(!drawerOpen));
+    scrim.addEventListener('click', () => setDrawer(false));
+    drawer.addEventListener('click', (e) => { if (e.target.closest('a')) setDrawer(false, false); });
+    wide.addEventListener('change', () => { setDrawer(false, false); megaOpen(false); syncFooter(); placeIndicator(); });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (drawerOpen) setDrawer(false);
+            if (megaPanel.classList.contains('open')) { megaOpen(false); megaBtn.focus(); }
+            return;
+        }
+        if (e.key === 'Tab' && drawerOpen) {
+            const f = [burger, ...$$('a[href], button', drawer)];
+            const first = f[0], last = f[f.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+    });
+
+    /* ---------- ライト／ダーク ---------- */
+    const root = document.documentElement;
+    const systemDark = matchMedia('(prefers-color-scheme: dark)');
+    const isDark = () => (root.dataset.theme ? root.dataset.theme === 'dark' : systemDark.matches);
+    const SUN = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M12.6 3.4l-1 1M4.4 11.6l-1 1"/></svg>';
+    const MOON = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7z"/></svg>';
+    function paintTheme() {
+        $$('[data-theme-toggle]').forEach(b => { b.innerHTML = isDark() ? `${SUN}ライト表示にする` : `${MOON}ダーク表示にする`; });
+    }
+    const savedTheme = store.get('junbi-ok:theme', null);
+    if (savedTheme === 'dark' || savedTheme === 'light') root.dataset.theme = savedTheme;
+    paintTheme();
+    systemDark.addEventListener('change', paintTheme);
+    $$('[data-theme-toggle]').forEach(b => b.addEventListener('click', () => {
+        root.dataset.theme = isDark() ? 'light' : 'dark';
+        store.set('junbi-ok:theme', root.dataset.theme);
+        paintTheme();
+    }));
+
+    /* ---------- アコーディオン ---------- */
+    function initAcc(d) {
+        const summary = $('summary', d), body = $('.acc-body', d);
+        let anim;
+        d.classList.toggle('is-open', d.open);
+        d.addEventListener('toggle', () => { if (!d.classList.contains('closing')) d.classList.toggle('is-open', d.open); });
+        summary.addEventListener('click', (e) => {
+            if (reduced.matches) return;
+            e.preventDefault();
+            if (anim) anim.cancel();
+            const opening = !d.open || d.classList.contains('closing');
+            if (opening) {
+                d.classList.remove('closing');
+                d.open = true;
+                d.classList.add('is-open');
+                anim = body.animate([{ height: '0px', opacity: 0 }, { height: body.scrollHeight + 'px', opacity: 1 }], { duration: 340, easing: EASE });
+            } else {
+                d.classList.add('closing');
+                d.classList.remove('is-open');
+                anim = body.animate([{ height: body.offsetHeight + 'px', opacity: 1 }, { height: '0px', opacity: 0 }], { duration: 280, easing: EASE });
+                anim.onfinish = () => { d.open = false; d.classList.remove('closing'); };
+            }
+        });
+    }
+    const footAcc = $('#foot-acc');
+    function syncFooter() { if (wide.matches) footAcc.open = true; footAcc.classList.toggle('is-open', footAcc.open); }
+
+    $$('details.acc').forEach(initAcc);
+    syncFooter();
+
+    /* ---------- スクロール連動（現在地・ヘッダー・進捗リング） ---------- */
+    const chipsEl = $('#chips'), chipInd = $('.chip-ind'), chips = $$('.chip', chipsEl);
+    const crumbs = $('#crumbs'), ld = $('#ld-crumbs');
+    const spy = Object.keys(NAMES).map(id => document.getElementById(id));
+    const toTop = $('#to-top'), ring = $('#ring');
+    const RING = 131.95;
+    let current, lastY = scrollY, ticking = false;
+
+    function placeIndicator(scrollChips) {
+        const chip = chips.find(c => c.classList.contains('active'));
+        if (!chip) { chipInd.style.opacity = 0; return; }
+        chipInd.style.opacity = 1;
+        chipInd.style.width = chip.offsetWidth + 'px';
+        chipInd.style.transform = `translateX(${chip.offsetLeft}px)`;
+        if (scrollChips) chipsEl.scrollTo({ left: chip.offsetLeft - (chipsEl.clientWidth - chip.offsetWidth) / 2, behavior: reduced.matches ? 'auto' : 'smooth' });
+    }
+    function setCurrent(id) {
+        if (id === current) return;
+        current = id;
+        chips.forEach(c => {
+            const on = c.getAttribute('href') === '#' + id;
+            c.classList.toggle('active', on);
+            on ? c.setAttribute('aria-current', 'true') : c.removeAttribute('aria-current');
+        });
+        placeIndicator(true);
+        $$('[data-nav]').forEach(a => (a.dataset.nav === id ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+
+        crumbs.innerHTML = id
+            ? `<li><a href="#top">ホーム</a></li><li aria-current="page">${esc(NAMES[id])}</li>`
+            : `<li aria-current="page">ホーム</li>`;
+        if (id && !reduced.matches) crumbs.lastElementChild.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: EASE });
+
+        const base = location.href.split('#')[0];
+        const list = [{ '@type': 'ListItem', position: 1, name: 'ホーム', item: base }];
+        if (id) list.push({ '@type': 'ListItem', position: 2, name: NAMES[id], item: `${base}#${id}` });
+        ld.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: list });
+    }
+    function onScroll() {
+        ticking = false;
+        const y = scrollY;
+        if (!drawerOpen) {
+            if (y > lastY + 4 && y > 140) header.classList.add('compact');
+            else if (y < lastY - 4 || y < 60) header.classList.remove('compact');
+        }
+        lastY = y;
+        header.classList.toggle('scrolled', y > 8);
+
+        const line = header.getBoundingClientRect().bottom + 40;
+        let cur = null;
+        for (const s of spy) if (s.getBoundingClientRect().top <= line) cur = s.id;
+        const max = document.documentElement.scrollHeight - innerHeight;
+        if (max > 0 && y >= max - 2) cur = spy[spy.length - 1].id;
+        setCurrent(cur || undefined);
+
+        ring.style.strokeDashoffset = RING * (1 - (max > 0 ? Math.min(1, y / max) : 0));
+        const show = y > 500;
+        toTop.classList.toggle('show', show);
+        if (!drawerOpen) toTop.inert = !show;
+    }
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+    addEventListener('resize', () => placeIndicator());
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => placeIndicator());
+    toTop.addEventListener('click', () => scrollTo({ top: 0, behavior: reduced.matches ? 'auto' : 'smooth' }));
+    current = null; setCurrent(undefined); onScroll();
+
+    /* ---------- 画面に入ったら表示アニメーション ---------- */
+    if ('IntersectionObserver' in window && !reduced.matches) {
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+        });
+        $$('.reveal, .grid').forEach(el => io.observe(el));
+    }
+
+    init();
+</script>
+
+</body>
+</html>
