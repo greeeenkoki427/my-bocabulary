@@ -1,7 +1,7 @@
 {
   "_note": "カテゴリと検索キーワードの定義。ここを編集して商品の候補を入れ替えます。楽天とAmazonの両方で同じキーワードを検索します。",
   "affiliate": {
-    "_note": "マネタイズ開始時に入れる。空の間はアフィリエイト情報なしのリンクを出す。",
+    "_note": "現在は空（通常の商品URLのみ）。アフィリエイト承認後にIDを入れ、scripts/fetch-products.mjs を再実行するとリンクに紹介情報が付く。",
     "rakutenAffiliateId": "",
     "amazonAssociateTag": ""
   },
