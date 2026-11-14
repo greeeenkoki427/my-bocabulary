@@ -4,259 +4,256 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>準備はOK？ | 旅行用品ガイド</title>
-    <meta name="description" content="行き先に合わせて、旅の持ち物をチェックリストで準備。">
+    <meta name="description" content="旅先とスマホまわりの、いま欲しい旅行用品をカテゴリ別に。">
     <style>
         :root {
             --bg: #ffffff;
             --panel: #f5f5f7;
-            --panel-2: #ececf0;
+            --card: #ffffff;
             --text: #1d1d1f;
             --sub: #6e6e73;
             --line: #d2d2d7;
             --accent: #2f5d50;
-            --radius-lg: 28px;
+            --img: #e8e8ed;
         }
         @media (prefers-color-scheme: dark) {
             :root:not([data-theme="light"]) {
                 --bg: #000000;
                 --panel: #1c1c1e;
-                --panel-2: #2c2c2e;
+                --card: #2c2c2e;
                 --text: #f5f5f7;
                 --sub: #a1a1a6;
                 --line: #424245;
                 --accent: #7fb8a6;
+                --img: #3a3a3c;
             }
         }
         :root[data-theme="dark"] {
             --bg: #000000;
             --panel: #1c1c1e;
-            --panel-2: #2c2c2e;
+            --card: #2c2c2e;
             --text: #f5f5f7;
             --sub: #a1a1a6;
             --line: #424245;
             --accent: #7fb8a6;
+            --img: #3a3a3c;
         }
 
         * { box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; }
         body {
             margin: 0;
             background: var(--bg);
             color: var(--text);
             font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Helvetica Neue", Arial, sans-serif;
             -webkit-font-smoothing: antialiased;
-            line-height: 1.6;
+            line-height: 1.5;
         }
-        a { color: inherit; }
+        a { color: inherit; text-decoration: none; }
 
-        /* 上部ナビ */
-        .nav {
+        /* 上部：ブランド＋カテゴリのチップ（横スクロール） */
+        .top {
             position: sticky; top: 0; z-index: 10;
-            background: color-mix(in srgb, var(--bg) 85%, transparent);
+            background: color-mix(in srgb, var(--bg) 92%, transparent);
             backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--line);
         }
-        .nav-inner {
-            max-width: 1100px; margin: 0 auto; padding: 0 16px;
-            height: 56px; display: flex; align-items: center; justify-content: space-between;
+        .brand {
+            padding: 14px 16px 8px;
+            font-weight: 700; font-size: 18px;
         }
-        .brand { font-weight: 700; text-decoration: none; letter-spacing: 0.02em; }
-        .nav-links { display: flex; gap: 18px; font-size: 14px; }
-        .nav-links a { text-decoration: none; color: var(--sub); }
-        .nav-links a:hover { color: var(--text); }
-        @media (max-width: 640px) { .nav-links { display: none; } }
-
-        /* 共通パネル */
-        .panel {
-            background: var(--panel);
-            border-radius: var(--radius-lg);
-            margin: 16px auto;
-            max-width: 1100px;
-            padding: 56px 32px;
-            position: relative;
-            overflow: hidden;
+        .chips {
+            display: flex; gap: 8px;
+            overflow-x: auto; -webkit-overflow-scrolling: touch;
+            padding: 0 16px 12px;
+            scrollbar-width: none;
         }
-        .panel.alt { background: var(--panel-2); }
-        .panel h1, .panel h2 {
-            font-size: clamp(36px, 7vw, 64px);
-            font-weight: 700;
-            line-height: 1.1;
-            margin: 0 0 12px;
-            letter-spacing: -0.01em;
-        }
-        .lead { color: var(--sub); font-size: 18px; margin: 0 0 28px; max-width: 520px; }
-        .eyebrow { font-size: 13px; color: var(--sub); font-weight: 600; margin: 0 0 8px; letter-spacing: 0.08em; }
-
-        .pill {
-            display: inline-block;
-            border: 1.5px solid var(--text);
-            color: var(--text);
-            background: transparent;
-            padding: 10px 22px;
+        .chips::-webkit-scrollbar { display: none; }
+        .chip {
+            flex: none;
+            border: 1px solid var(--line);
             border-radius: 980px;
-            font-size: 15px;
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-            font-family: inherit;
-            transition: background 0.2s, color 0.2s;
+            padding: 8px 14px;
+            font-size: 14px;
+            color: var(--text);
+            background: var(--bg);
         }
-        .pill:hover { background: var(--text); color: var(--bg); }
-        .pill.solid { background: var(--accent); border-color: var(--accent); color: #fff; }
-        .pill.solid:hover { opacity: 0.9; background: var(--accent); color: #fff; }
 
-        /* 項目の装飾（写真は後で差し替え） */
-        .art {
-            margin-top: 40px;
-            height: 260px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, var(--panel-2), var(--line));
-            display: flex; align-items: flex-end; justify-content: flex-end;
-            padding: 16px;
-            color: var(--sub);
-            font-size: 12px;
+        /* ヒーロー */
+        .hero {
+            padding: 36px 20px 28px;
         }
-        .art.hero-art { height: 340px; background: linear-gradient(160deg, #cfe3dc 0%, #e8efe9 45%, #f5f5f7 100%); }
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) .art.hero-art { background: linear-gradient(160deg, #1f3530 0%, #22302b 45%, #1c1c1e 100%); }
+        .hero h1 {
+            font-size: 44px; line-height: 1.1; font-weight: 700;
+            margin: 0 0 12px; letter-spacing: -0.01em;
         }
-        :root[data-theme="dark"] .art.hero-art { background: linear-gradient(160deg, #1f3530 0%, #22302b 45%, #1c1c1e 100%); }
+        .hero p { color: var(--sub); font-size: 16px; margin: 0; }
 
-        /* 持ち物チェックリスト */
-        .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
-        .tab {
-            border: 1px solid var(--line); background: var(--bg); color: var(--text);
-            padding: 8px 16px; border-radius: 980px; cursor: pointer; font-size: 14px; font-family: inherit;
+        /* カテゴリ */
+        .section {
+            background: var(--panel);
+            border-radius: 28px;
+            margin: 0 12px 16px;
+            padding: 28px 16px 20px;
+            scroll-margin-top: 110px;
         }
-        .tab[aria-selected="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
-        .progress { color: var(--sub); font-size: 14px; margin-bottom: 16px; }
-        .check-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
-        .check-list li {
-            background: var(--bg); border-radius: 16px; padding: 14px 18px;
-            display: flex; align-items: center; gap: 12px;
+        .section-head {
+            display: flex; align-items: flex-end; justify-content: space-between;
+            gap: 12px; margin-bottom: 18px;
         }
-        .check-list input { width: 20px; height: 20px; accent-color: var(--accent); flex: none; }
-        .check-list label { flex: 1; cursor: pointer; font-size: 16px; }
-        .check-list input:checked + span { text-decoration: line-through; color: var(--sub); }
-        .note { color: var(--sub); font-size: 13px; margin-top: 20px; }
+        .section h2 {
+            font-size: 28px; line-height: 1.2; font-weight: 700; margin: 0;
+        }
+        .section .eyebrow {
+            font-size: 12px; color: var(--sub); font-weight: 600;
+            letter-spacing: 0.08em; margin: 0 0 6px;
+        }
+        .more {
+            flex: none;
+            border: 1.5px solid var(--text);
+            border-radius: 980px;
+            padding: 6px 14px;
+            font-size: 13px; font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+        }
 
-        /* 旅のシーン */
-        .scene-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 32px; }
-        .scene {
-            background: var(--bg); border-radius: 20px; padding: 24px;
+        /* 商品グリッド：スマホは2列 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
         }
-        .scene h3 { margin: 0 0 6px; font-size: 20px; }
-        .scene p { margin: 0 0 16px; color: var(--sub); font-size: 14px; }
+        .card {
+            background: var(--card);
+            border-radius: 18px;
+            padding: 10px 10px 14px;
+            display: flex; flex-direction: column;
+        }
+        .card .img {
+            aspect-ratio: 1 / 1;
+            border-radius: 12px;
+            background: var(--img);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--sub); font-size: 12px;
+            margin-bottom: 10px;
+        }
+        .card .name {
+            font-size: 14px; line-height: 1.4;
+            margin: 0 2px 6px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+            min-height: 2.8em;
+        }
+        .card .price {
+            font-size: 17px; font-weight: 700;
+            margin: auto 2px 0;
+        }
+        .card .price small { font-size: 12px; font-weight: 400; color: var(--sub); }
+
+        .note {
+            text-align: center; color: var(--sub); font-size: 12px;
+            margin: 8px 0 0;
+        }
 
         /* フッター */
         footer {
-            max-width: 1100px; margin: 40px auto 60px; padding: 0 32px;
-            color: var(--sub); font-size: 13px;
+            padding: 28px 20px 48px;
+            color: var(--sub); font-size: 12px; line-height: 1.7;
         }
-        footer nav a { margin-right: 16px; }
-        footer p { margin: 8px 0; }
+        footer nav { margin: 10px 0; display: flex; flex-wrap: wrap; gap: 14px; }
+        footer nav a { color: var(--sub); text-decoration: underline; }
 
-        @media (max-width: 640px) {
-            .panel { margin: 12px 12px; padding: 40px 22px; border-radius: 22px; }
-            .art { height: 200px; }
-            .art.hero-art { height: 220px; }
-            footer { padding: 0 20px; }
+        /* 広い画面では2段組に */
+        @media (min-width: 720px) {
+            .hero { padding: 56px 32px 36px; max-width: 1100px; margin: 0 auto; }
+            .hero h1 { font-size: 64px; }
+            .section { max-width: 1100px; margin: 0 auto 20px; padding: 36px 32px 28px; }
+            .grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+            .card { padding: 14px 14px 18px; }
+            .brand, .chips { max-width: 1100px; margin: 0 auto; padding-left: 32px; padding-right: 32px; }
+            footer { max-width: 1100px; margin: 0 auto; padding: 28px 32px 48px; }
         }
     </style>
 </head>
 <body>
 
-<nav class="nav">
-    <div class="nav-inner">
-        <a class="brand" href="#top">準備はOK？</a>
-        <div class="nav-links">
-            <a href="#checklist">チェックリスト</a>
-            <a href="#overseas">海外</a>
-            <a href="#onsen">温泉</a>
-            <a href="#business">出張</a>
-            <a href="#weekend">週末</a>
-        </div>
-    </div>
-</nav>
+<header class="top">
+    <div class="brand">準備はOK？</div>
+    <nav class="chips" aria-label="カテゴリ">
+        <a class="chip" href="#phone">スマホ周辺</a>
+        <a class="chip" href="#skin">旅先スキンケア</a>
+        <a class="chip" href="#bag">バッグ・収納</a>
+        <a class="chip" href="#comfort">機内・移動</a>
+    </nav>
+</header>
 
-<main id="top">
-
-    <!-- ヒーロー -->
-    <section class="panel">
-        <p class="eyebrow">TRAVEL GEAR GUIDE</p>
+<main>
+    <section class="hero">
         <h1>準備は、<br>OK？</h1>
-        <p class="lead">行き先と日数を決めたら、いま必要なものだけをそろえよう。旅のわくわくは、準備の時間から始まります。</p>
-        <a class="pill solid" href="#checklist">持ち物チェックを始める</a>
-        <div class="art hero-art">ヒーロー画像（後で差し替え）</div>
+        <p>旅先とスマホまわりで、いま欲しいものをカテゴリ別に。</p>
     </section>
 
-    <!-- 持ち物チェックリスト -->
-    <section class="panel alt" id="checklist">
-        <p class="eyebrow">CHECKLIST</p>
-        <h2>持ち物チェック。</h2>
-        <p class="lead">旅のタイプを選んで、チェックを入れていくだけ。進み具合はこの端末に保存されます。</p>
-
-        <div class="tabs" role="tablist" id="tabs"></div>
-        <div class="progress" id="progress"></div>
-        <ul class="check-list" id="checkList"></ul>
-        <p class="note">※ チェック状態はこのブラウザにのみ保存されます。アイテムの商品リンクは今後追加予定です。</p>
+    <!-- スマホ周辺用品 -->
+    <section class="section" id="phone">
+        <p class="eyebrow">PHONE & GADGET</p>
+        <div class="section-head">
+            <h2>スマホ周辺用品</h2>
+            <a class="more" href="#">すべて見る</a>
+        </div>
+        <div class="grid">
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">モバイルバッテリー（商品名は後で差し替え）</p><p class="price">¥ —</p></a>
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">急速充電ケーブル</p><p class="price">¥ —</p></a>
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">ワイヤレスイヤホン</p><p class="price">¥ —</p></a>
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">スマホスタンド</p><p class="price">¥ —</p></a>
+        </div>
+        <p class="note">※ 価格は楽天の商品情報から後で表示します</p>
     </section>
 
-    <!-- 海外 -->
-    <section class="panel" id="overseas">
-        <p class="eyebrow">OVERSEAS</p>
-        <h2>海外旅行。</h2>
-        <p class="lead">パスポート、変換プラグ、現地で使える通信手段。忘れやすいものほど、早めに確認。</p>
-        <button class="pill" onclick="openChecklist('overseas')">海外の持ち物を見る</button>
-        <div class="art">画像枠（自分で撮った写真を後で入れる）</div>
-    </section>
-
-    <!-- 温泉 -->
-    <section class="panel alt" id="onsen">
-        <p class="eyebrow">ONSEN</p>
-        <h2>温泉旅行。</h2>
-        <p class="lead">タオル、羽織もの、ちょっとしたアメニティ。湯上がりの時間まで、ちゃんと楽しめる準備を。</p>
-        <button class="pill" onclick="openChecklist('onsen')">温泉の持ち物を見る</button>
-        <div class="art">画像枠（後で差し替え）</div>
-    </section>
-
-    <!-- 出張 -->
-    <section class="panel" id="business">
-        <p class="eyebrow">BUSINESS</p>
-        <h2>出張の、身軽さ。</h2>
-        <p class="lead">荷物は少なく、必要なものはすぐ取り出せるように。移動の多い日ほど、準備の差が出ます。</p>
-        <button class="pill" onclick="openChecklist('business')">出張の持ち物を見る</button>
-        <div class="art">画像枠（後で差し替え）</div>
-    </section>
-
-    <!-- 週末 -->
-    <section class="panel alt" id="weekend">
-        <p class="eyebrow">WEEKEND</p>
-        <h2>週末の、小さな旅。</h2>
-        <p class="lead">思い立ったらすぐ出発。最低限そろえておきたいものだけをまとめました。</p>
-        <button class="pill" onclick="openChecklist('weekend')">週末の持ち物を見る</button>
-        <div class="art">画像枠（後で差し替え）</div>
-    </section>
-
-    <!-- 旅のスタイル（補足） -->
-    <section class="panel">
-        <p class="eyebrow">HOW TO USE</p>
-        <h2>使い方。</h2>
-        <div class="scene-grid">
-            <div class="scene">
-                <h3>1. 旅を選ぶ</h3>
-                <p>海外、温泉、出張、週末。今回の旅に近いものを選びます。</p>
-            </div>
-            <div class="scene">
-                <h3>2. チェックする</h3>
-                <p>持ち物を一つずつ確認。忘れやすい項目も入っています。</p>
-            </div>
-            <div class="scene">
-                <h3>3. 出発する</h3>
-                <p>全部チェックできたら、準備はOK。あとは出発するだけです。</p>
-            </div>
+    <!-- 旅先スキンケア -->
+    <section class="section" id="skin">
+        <p class="eyebrow">TRAVEL SKINCARE</p>
+        <div class="section-head">
+            <h2>旅先スキンケア用品</h2>
+            <a class="more" href="#">すべて見る</a>
+        </div>
+        <div class="grid">
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">持ち運びやすい化粧水</p><p class="price">¥ —</p></a>
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">日焼け止め（小容量）</p><p class="price">¥ —</p></a>
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">リップクリーム</p><p class="price">¥ —</p></a>
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">機内用フェイスミスト</p><p class="price">¥ —</p></a>
         </div>
     </section>
 
+    <!-- バッグ・収納 -->
+    <section class="section" id="bag">
+        <p class="eyebrow">BAG & STORAGE</p>
+        <div class="section-head">
+            <h2>バッグ・収納</h2>
+            <a class="more" href="#">すべて見る</a>
+        </div>
+        <div class="grid">
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">トラベルポーチ</p><p class="price">¥ —</p></a>
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">圧縮袋セット</p><p class="price">¥ —</p></a>
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">機内持ち込みバッグ</p><p class="price">¥ —</p></a>
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">小分けボトルセット</p><p class="price">¥ —</p></a>
+        </div>
+    </section>
+
+    <!-- 機内・移動 -->
+    <section class="section" id="comfort">
+        <p class="eyebrow">COMFORT ON THE MOVE</p>
+        <div class="section-head">
+            <h2>機内・移動の快適グッズ</h2>
+            <a class="more" href="#">すべて見る</a>
+        </div>
+        <div class="grid">
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">ネックピロー</p><p class="price">¥ —</p></a>
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">アイマスク</p><p class="price">¥ —</p></a>
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">着圧ソックス</p><p class="price">¥ —</p></a>
+            <a class="card" href="#"><div class="img">商品画像</div><p class="name">ノイズキャンセリングイヤホン</p><p class="price">¥ —</p></a>
+        </div>
+    </section>
 </main>
 
 <footer>
@@ -268,75 +265,6 @@
     </nav>
     <p>© 準備はOK？</p>
 </footer>
-
-<script>
-    const LISTS = {
-        overseas: { label: '海外', items: ['パスポート（有効期限を確認）', '航空券・eチケット', '海外旅行保険', '変換プラグ', '現地で使える通信手段（eSIM・Wi-Fi）', 'クレジットカード（2枚以上）', '現地通貨または対応キャッシュカード', 'モバイルバッテリー', '常備薬・処方薬（英文の説明書き）'] },
-        onsen:    { label: '温泉', items: ['タオル（フェイス・バス）', '羽織もの・薄手の上着', '化粧水・乳液などのスキンケア', 'ヘアゴム・ヘアブラシ', 'スリッパ（貸し出しがない宿の場合）', '常備薬', 'カメラ・充電器', '小さめのエコバッグ'] },
-        business: { label: '出張', items: ['モバイルバッテリー', 'ノートPCと充電器', '名刺・資料（データのバックアップも）', 'ワイシャツ・替えのインナー', '折りたたみ傘', '常備薬・絆創膏', 'イヤホン', '洗面用具（小分け）'] },
-        weekend:  { label: '週末', items: ['財布・スマホ・充電器', '最低限の着替え', '洗面用具（小分け）', 'モバイルバッテリー', '常備薬', '羽織もの', 'エコバッグ'] }
-    };
-
-    const STORAGE_KEY = 'travelChecks';
-    let currentType = 'overseas';
-
-    function loadChecks() {
-        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
-        catch (e) { return {}; }
-    }
-    function saveChecks(data) {
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { /* 保存できなくても表示は動く */ }
-    }
-
-    function renderTabs() {
-        const tabs = document.getElementById('tabs');
-        tabs.innerHTML = '';
-        Object.keys(LISTS).forEach(key => {
-            const b = document.createElement('button');
-            b.className = 'tab';
-            b.setAttribute('role', 'tab');
-            b.setAttribute('aria-selected', String(key === currentType));
-            b.textContent = LISTS[key].label;
-            b.onclick = () => { currentType = key; render(); };
-            tabs.appendChild(b);
-        });
-    }
-
-    function render() {
-        renderTabs();
-        const list = document.getElementById('checkList');
-        const checks = loadChecks();
-        const items = LISTS[currentType].items;
-        const saved = checks[currentType] || {};
-        list.innerHTML = '';
-        let done = 0;
-        items.forEach((text, i) => {
-            const id = `${currentType}-${i}`;
-            const checked = !!saved[i];
-            if (checked) done++;
-            const li = document.createElement('li');
-            li.innerHTML = `<input type="checkbox" id="${id}" ${checked ? 'checked' : ''}><label for="${id}"><span></span></label>`;
-            li.querySelector('span').textContent = text;
-            li.querySelector('input').onchange = (e) => {
-                const data = loadChecks();
-                data[currentType] = data[currentType] || {};
-                data[currentType][i] = e.target.checked;
-                saveChecks(data);
-                render();
-            };
-            list.appendChild(li);
-        });
-        document.getElementById('progress').textContent = `${done} / ${items.length} 準備できました`;
-    }
-
-    function openChecklist(type) {
-        currentType = type;
-        render();
-        document.getElementById('checklist').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    render();
-</script>
 
 </body>
 </html>
